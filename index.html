@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Roblox Status Checker</title>
+    <style>
+        * {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="statusmessage"><h2>Loading...</h2></div>
+
+    <div id="statusiframe"></div>
+
+    <button id="statusbtn" onClick="document.getElementById('statusiframe').innerHTML = `<iframe src='https://status.roblox.com/' style='width: 100%; height: 100%; position: fixed; top: 1; left: 0; border: none; margin: 0; padding: 0; overflow: hidden; z-index: 999999;'></iframe>`;document.getElementById('statusbtn').remove();">Show full status</button>
+
+    <script>
+        const statusIoEndpoint = 'https://api.status.io/1.0/status/59db90dbcdeb2f04dadcf16d';
+
+        async function getStatus() {
+            try {
+                const response = await fetch(statusIoEndpoint);
+                const responseData = await response.json();
+
+                if (
+                    responseData &&
+                    responseData.result &&
+                    responseData.result.status_overall &&
+                    responseData.result.status_overall.status
+                ) {
+                    const status = responseData.result.status_overall.status;
+
+                    if (status === 'Operational') {
+                        document.getElementById('statusmessage').innerHTML = '<h2>Roblox is up</h2>';
+                    } else if (status === 'Degraded Performance') {
+                        document.getElementById('statusmessage').innerHTML = '<h2>Roblox is having minor issues</h2>';
+                    } else {
+                        document.getElementById('statusmessage').innerHTML = '<h2>Roblox is down</h2>';
+                    }
+                }
+            } catch (error) {
+                console.error(error);
+                document.getElementById('statusmessage').innerHTML = '<h2>Roblox is down</h2>';
+            }
+        }
+
+        getStatus();
+    </script>
+</body>
+</html>
